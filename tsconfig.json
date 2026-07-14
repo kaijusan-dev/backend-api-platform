@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "esnext",
+    "types": ["node"],
+    "lib": ["ESNext"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noImplicitOverride": true,
+    "sourceMap": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "incremental": true,
+    // "rootDir": "src",
+    "outDir": "./build",
+    "noErrorTruncation": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnreachableCode": false,
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "prisma.config.ts"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    container_name: backend-api-postgres
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
