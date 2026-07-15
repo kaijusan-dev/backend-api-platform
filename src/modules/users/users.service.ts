@@ -5,10 +5,10 @@ export const getUsers = async () => {
     return await prisma.user.findMany();
 }
 
-export const getUserById = async (id: string) => {
+export const getUserById = async (id: number) => {
     const user = await prisma.user.findUnique({
         where: {
-            id: parseInt(id, 10),
+            id,
         }
     });
     if (!user) throw new UserNotFoundError();

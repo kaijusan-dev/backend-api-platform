@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const UserParamsSchema = z.object({
-    id: z.string().min(1),
+    id: z.coerce.number().min(1),
 });
 
 export const UserSchema = z.object({

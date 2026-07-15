@@ -4,7 +4,7 @@ import { errorMiddleware } from './middleware/error.middleware.js';
 import { usersRouter } from './modules/users/users.routes.js';
 import { PathNotFoundError } from './errors/http.errors.js';
 
-const app = express();
+export const app = express();
 
 app.use(express.json())
 
@@ -20,7 +20,3 @@ app.use((req, res) => {
 });
 
 app.use(errorMiddleware);	
-
-app.listen(env.PORT, () => {
-	console.log(`Server started on port ${env.PORT}`);
-});

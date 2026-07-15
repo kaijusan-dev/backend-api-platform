@@ -4,7 +4,7 @@
   "description": "мой второй проект на typescript, нейронка мной командует, пока не сделаю хорошо.",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/app.ts",
+    "dev": "tsx watch src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
