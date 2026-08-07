@@ -25,9 +25,14 @@ export class PathNotFoundError extends HttpError {
     };
 };
 
-
 export class BadRequestError extends HttpError {
     constructor() {
         super('BadRequestError', 'Неверный запрос!', 400);
+    };
+};
+
+export class ConflictError extends HttpError {
+    constructor(message: string) {
+        super('ConflictError', message, 409);
     };
 };

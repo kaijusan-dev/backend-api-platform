@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
 import * as usersService from './users.service.js';
-import { UserParamsSchema } from './users.types.js';
+import { CreateUserSchema, UserParamsSchema } from './users.types.js';
 import { BadRequestError } from '../../errors/http.errors.js';
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -18,15 +18,15 @@ export const getUserById = async (req: Request, res: Response) => {
     res.json(result);
 }
 
-// export const addUser = (req: Request, res: Response) => {
-//     const parsedBody = CreateUserSchema.safeParse(req.body);
+export const addUser = async (req: Request, res: Response) => {
+    const parsedBody = CreateUserSchema.safeParse(req.body);
 
-//     if (!parsedBody.success) throw new BadRequestError();
+    if (!parsedBody.success) throw new BadRequestError();
 
-//     const result =  usersService.addUser(parsedBody.data);
+    const result = await usersService.addUser(parsedBody.data);
 
-//     res.status(201).json(result); 
-// }
+    res.status(201).json(result); 
+}
 
 // export const updateUser = (req: Request, res: Response) => {
 //     const parsedParams = UserParamsSchema.safeParse(req.params);

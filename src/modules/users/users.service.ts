@@ -1,5 +1,7 @@
+import { Prisma } from "@prisma/client";
 import prisma from "../../database/prisma.js";
-import { UserNotFoundError } from "../../errors/http.errors.js";
+import { ConflictError, UserNotFoundError } from "../../errors/http.errors.js";
+import type { CreateUser } from "./users.types.js";
 
 export const getUsers = async () => {
     return await prisma.user.findMany();
@@ -15,18 +17,16 @@ export const getUserById = async (id: number) => {
     return user;
 }
 
-// export const addUser = (user: CreateUser) => {
-//     const nextId = (activeUsers.size > 0 
-//         ? Math.max(...Array.from(activeUsers.keys()).map(Number)) + 1 
-//         : 1
-//     ).toString();
-
-//     const newUser = {...user, id: nextId};
-
-//     activeUsers.set(nextId, newUser);
-
-//     return newUser;
-// }
+export const addUser = async (user: CreateUser) => {
+    try {
+        return await prisma.user.create({ data: user });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+            throw new ConflictError('Пользователь с таким username или email уже существует');
+        }
+        throw error;
+    }
+}
 
 // export const updateUser = (id: string, newUser: PartialUser) => {
 //     const currentUser = getUserById(id);
