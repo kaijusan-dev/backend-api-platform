@@ -35,7 +35,7 @@ export const addUser = async (user: CreateUser) => {
 export const updateUser = async (id: number, changedUser: PartialUser) => {
 
     const { username, email } = changedUser;
-    
+
     if (!username && !email) throw new BadRequestError();
 
     try {
@@ -59,8 +59,18 @@ export const updateUser = async (id: number, changedUser: PartialUser) => {
     }
 }
 
-// export const deleteUser = (id: string) => {
-//     if (!activeUsers.has(id)) throw new UserNotFoundError();
-//     activeUsers.delete(id);
-//     return;
-// }
+export const deleteUser = async (id: number) => {
+    try {
+        await prisma.user.delete({
+            where: {
+                id
+            }
+        })
+        return;
+    } catch(error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw new UserNotFoundError();
+        }
+        throw error;
+    }
+}

@@ -39,12 +39,12 @@ export const updateUser = async (req: Request, res: Response) => {
     res.json(result);
 }
 
-// export const deleteUser = (req: Request, res: Response) => {
-//     const parsedParams = UserParamsSchema.safeParse(req.params);
+export const deleteUser = async (req: Request, res: Response) => {
+    const parsedParams = UserParamsSchema.safeParse(req.params);
 
-//     if (!parsedParams.success) throw new BadRequestError();
+    if (!parsedParams.success) throw new BadRequestError();
 
-//     usersService.deleteUser(parsedParams.data.id);
+    await usersService.deleteUser(parsedParams.data.id);
 
-//     res.sendStatus(204);
-// }
+    res.sendStatus(204);
+}
