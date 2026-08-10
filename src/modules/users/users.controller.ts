@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
 import * as usersService from './users.service.js';
-import { CreateUserSchema, UserParamsSchema } from './users.types.js';
+import { CreateUserSchema, PartialUserSchema, UserParamsSchema } from './users.types.js';
 import { BadRequestError } from '../../errors/http.errors.js';
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -28,16 +28,16 @@ export const addUser = async (req: Request, res: Response) => {
     res.status(201).json(result); 
 }
 
-// export const updateUser = (req: Request, res: Response) => {
-//     const parsedParams = UserParamsSchema.safeParse(req.params);
-//     const parsedBody = PartialUserSchema.safeParse(req.body);
+export const updateUser = async (req: Request, res: Response) => {
+    const parsedParams = UserParamsSchema.safeParse(req.params);
+    const parsedBody = PartialUserSchema.safeParse(req.body);
 
-//     if (!parsedParams.success || !parsedBody.success) throw new BadRequestError();
+    if (!parsedParams.success || !parsedBody.success) throw new BadRequestError();
 
-//     const result =  usersService.updateUser(parsedParams.data.id, parsedBody.data);
+    const result = await usersService.updateUser(parsedParams.data.id, parsedBody.data);
 
-//     res.json(result);
-// }
+    res.json(result);
+}
 
 // export const deleteUser = (req: Request, res: Response) => {
 //     const parsedParams = UserParamsSchema.safeParse(req.params);

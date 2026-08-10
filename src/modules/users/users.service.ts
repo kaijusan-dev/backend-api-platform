@@ -1,10 +1,14 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../../database/prisma.js";
-import { ConflictError, UserNotFoundError } from "../../errors/http.errors.js";
-import type { CreateUser } from "./users.types.js";
+import { BadRequestError, ConflictError, UserNotFoundError } from "../../errors/http.errors.js";
+import type { CreateUser, PartialUser } from "./users.types.js";
 
 export const getUsers = async () => {
-    return await prisma.user.findMany();
+    return await prisma.user.findMany({
+        orderBy: {
+            id: 'asc'
+        }
+    });
 }
 
 export const getUserById = async (id: number) => {
@@ -28,19 +32,31 @@ export const addUser = async (user: CreateUser) => {
     }
 }
 
-// export const updateUser = (id: string, newUser: PartialUser) => {
-//     const currentUser = getUserById(id);
+export const updateUser = async (id: number, changedUser: PartialUser) => {
 
-//     const updatedUser = {
-//         id: currentUser.id,
-//         name: newUser.name ?? currentUser.name,
-//         email: newUser.email ?? currentUser.email,
-//     };
+    await getUserById(id);
 
-//     activeUsers.set(id, updatedUser);
+    const { username, email } = changedUser;
 
-//     return updatedUser;
-// }
+    if (!username && !email) throw new BadRequestError();
+
+    try {
+        return await prisma.user.update({
+            where: {
+                id
+            },
+            data: {
+                ...(username !== undefined && { username }),
+                ...(email !== undefined && { email }),
+            },
+        });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+            throw new ConflictError('Пользователь с таким username или email уже существует');
+        }
+        throw error;
+    }
+}
 
 // export const deleteUser = (id: string) => {
 //     if (!activeUsers.has(id)) throw new UserNotFoundError();
