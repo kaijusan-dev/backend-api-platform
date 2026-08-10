@@ -34,10 +34,8 @@ export const addUser = async (user: CreateUser) => {
 
 export const updateUser = async (id: number, changedUser: PartialUser) => {
 
-    await getUserById(id);
-
     const { username, email } = changedUser;
-
+    
     if (!username && !email) throw new BadRequestError();
 
     try {
@@ -51,7 +49,10 @@ export const updateUser = async (id: number, changedUser: PartialUser) => {
             },
         });
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw new UserNotFoundError();
+        }
+        else if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             throw new ConflictError('Пользователь с таким username или email уже существует');
         }
         throw error;
