@@ -5,7 +5,7 @@ import { BadRequestError } from '../../errors/http.errors.js';
 
 export const getUsers = async (req: Request, res: Response) => {
     const result = await usersService.getUsers();
-    res.json(result);
+    res.status(200).json(result);
 }
 
 export const getUserById = async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
     const result = await usersService.getUserById(parsedParams.data.id);
     
-    res.json(result);
+    res.status(200).json(result);
 }
 
 export const addUser = async (req: Request, res: Response) => {
@@ -36,7 +36,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
     const result = await usersService.updateUser(parsedParams.data.id, parsedBody.data);
 
-    res.json(result);
+    res.status(200).json(result);
 }
 
 export const deleteUser = async (req: Request, res: Response) => {
@@ -45,6 +45,13 @@ export const deleteUser = async (req: Request, res: Response) => {
     if (!parsedParams.success) throw new BadRequestError();
 
     await usersService.deleteUser(parsedParams.data.id);
+
+    res.sendStatus(204);
+}
+
+export const clearUsers = async (req: Request, res: Response) => {
+
+    await usersService.clearUsers();
 
     res.sendStatus(204);
 }
