@@ -76,27 +76,11 @@ export const deleteUser = async (id: number) => {
     }
 }
 
-// export const clearUsers = async () => {
-//     if (env.NODE_ENV === 'development') {
-//         const result = await prisma.user.deleteMany();
-//         console.log(`Удалено ${result.count} пользователей`);
-//         return;  
-//     };
-// }
-
 export const clearUsers = async () => {
-  // 1. Исправляем обращение к process.env
-  if (env.NODE_ENV === 'development') {
-    try {
-      // 2. Оборачиваем в try/catch для перехвата ошибок БД
-      const result = await prisma.user.deleteMany();
-      console.log(`Удалено ${result.count} пользователей`);
-      return result; 
-    } catch (error) {
-      console.error("Ошибка при очистке пользователей:", error);
-      throw error;
-    }
-  } else {
-    console.warn("Очистка базы данных доступна только в режиме разработки (development).");
-  }
-};
+    if (env.NODE_ENV === 'development') {
+        const result = await prisma.user.deleteMany();
+        console.log(`Удалено ${result.count} пользователей`);
+        return;  
+    };
+}
+

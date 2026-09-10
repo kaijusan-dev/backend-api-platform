@@ -86,6 +86,15 @@ describe('endpoints /users', () => {
         expect(response.body).toHaveProperty('message');
     });
 
+    test('POST /users - empty body', async () => {
+        const response = await request(app)
+            .post('/users')
+            .send({})
+            .expect(400);
+
+        expect(response.body).toHaveProperty('message');
+    });
+
     test('POST /users - conflict', async () => {
 
         const response = await request(app)
@@ -99,6 +108,91 @@ describe('endpoints /users', () => {
         expect(response.body).toHaveProperty('message');
     });
 
+    test('PATCH /users/:id - all fields', async () => {
+        const response = await request(app)
+            .patch(`/users/${userId}`)
+            .send({
+                username: 'testUpdated',
+                email: 'testUpdated@gmail.com'
+            })
+            .expect(200);
+
+        expect(response.body.username).toBe('testUpdated');
+        expect(response.body.email).toBe('testUpdated@gmail.com');
+    });
+
+    test('PATCH /users/:id - one field', async () => {
+        const response = await request(app)
+            .patch(`/users/${userId}`)
+            .send({
+                username: 'testUpdated',
+            })
+            .expect(200);
+
+        expect(response.body.username).toBe('testUpdated');
+        expect(response.body.email).toBe('test@gmail.com');
+    });
+
+    test('PATCH /users/:id - user not found', async () => {
+        await request(app)
+            .patch(`/users/9999999`)
+            .send({
+                username: 'testUpdated',
+                email: 'testUpdated@gmail.com'
+            })
+            .expect(404);
+    });
+
+    test('PATCH /users/:id - invalid id', async () => {
+        await request(app)
+            .patch(`/users/invalid`)
+            .send({
+                username: 'testUpdated',
+                email: 'testUpdated@gmail.com'
+            })
+            .expect(400);
+    });
+
+    test('PATCH /users/:id - invalid body', async () => {
+        await request(app)
+            .patch(`/users/${userId}`)
+            .send({
+                username: 123,
+                email: 'not email'
+            })
+            .expect(400);
+    });
+
+    test('PATCH /users/:id - empty body', async () => {
+        await request(app)
+            .patch(`/users/${userId}`)
+            .send({})
+            .expect(400);
+    });
+
+    test('PATCH /users/:id - conflict', async () => {
+
+        const user2 = await request(app)
+            .post('/users')
+            .send({
+                username: 'test2',
+                email: 'test2@gmail.com'
+            })
+            .expect(201);
+
+        await request(app)
+            .patch(`/users/${userId}`)
+            .send({
+                username: 'test2',
+                email: 'test2@gmail.com'
+            })
+            .expect(409);
+
+        await request(app)
+            .delete(`/users/${user2.body.id}`)
+            .expect(204);
+    });
+
     test('DELETE /users/:id', async () => {
         await request(app)
             .delete(`/users/${userId}`)
@@ -106,9 +200,9 @@ describe('endpoints /users', () => {
         userId = null;
     });
 
-    test('DELETE /users:id - user not found', async () => {
+    test('DELETE /users/:id - user not found', async () => {
 
-        const response = await request(app)
+        await request(app)
             .delete(`/users/9999999`)
             .expect(404);
     });
