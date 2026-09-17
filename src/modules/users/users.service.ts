@@ -1,30 +1,21 @@
 import { Prisma } from "@prisma/client";
-import prisma from "../../database/prisma.js";
 import { BadRequestError, ConflictError, UserNotFoundError } from "../../errors/http.errors.js";
 import type { CreateUser, PartialUser } from "./users.types.js";
-import { env } from "../../config/env.js";
+import * as usersRepository from './users.repository.js';
 
 export const getUsers = async () => {
-    return await prisma.user.findMany({
-        orderBy: {
-            id: 'asc'
-        }
-    });
+    return await usersRepository.getUsers();
 }
 
 export const getUserById = async (id: number) => {
-    const user = await prisma.user.findUnique({
-        where: {
-            id,
-        }
-    });
+    const user = await usersRepository.getUserById(id);
     if (!user) throw new UserNotFoundError();
     return user;
 }
 
-export const addUser = async (user: CreateUser) => {
+export const createUser = async (user: CreateUser) => {
     try {
-        return await prisma.user.create({ data: user });
+        return await usersRepository.createUser(user);
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             throw new ConflictError('Пользователь с таким username или email уже существует');
@@ -40,15 +31,7 @@ export const updateUser = async (id: number, changedUser: PartialUser) => {
     if (!username && !email) throw new BadRequestError();
 
     try {
-        return await prisma.user.update({
-            where: {
-                id
-            },
-            data: {
-                ...(username !== undefined && { username }),
-                ...(email !== undefined && { email }),
-            },
-        });
+        return await usersRepository.updateUser(id, changedUser);
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new UserNotFoundError();
@@ -62,11 +45,7 @@ export const updateUser = async (id: number, changedUser: PartialUser) => {
 
 export const deleteUser = async (id: number) => {
     try {
-        await prisma.user.delete({
-            where: {
-                id
-            }
-        })
+        await usersRepository.deleteUser(id);
         return;
     } catch(error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
@@ -75,12 +54,3 @@ export const deleteUser = async (id: number) => {
         throw error;
     }
 }
-
-export const clearUsers = async () => {
-    if (env.NODE_ENV === 'development') {
-        const result = await prisma.user.deleteMany();
-        console.log(`Удалено ${result.count} пользователей`);
-        return;  
-    };
-}
-

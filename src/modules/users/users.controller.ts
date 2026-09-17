@@ -18,12 +18,12 @@ export const getUserById = async (req: Request, res: Response) => {
     res.status(200).json(result);
 }
 
-export const addUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
     const parsedBody = CreateUserSchema.safeParse(req.body);
 
     if (!parsedBody.success) throw new BadRequestError();
 
-    const result = await usersService.addUser(parsedBody.data);
+    const result = await usersService.createUser(parsedBody.data);
 
     res.status(201).json(result); 
 }
@@ -45,13 +45,6 @@ export const deleteUser = async (req: Request, res: Response) => {
     if (!parsedParams.success) throw new BadRequestError();
 
     await usersService.deleteUser(parsedParams.data.id);
-
-    res.sendStatus(204);
-}
-
-export const clearUsers = async (req: Request, res: Response) => {
-
-    await usersService.clearUsers();
 
     res.sendStatus(204);
 }
