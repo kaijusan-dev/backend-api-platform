@@ -5,14 +5,16 @@ export const UserParamsSchema = z.object({
 });
 
 export const UserSchema = z.object({
-    id: z.string(),
+    id: z.number(),
     username: z.string().min(2),
-    email: z.email(),
+    email: z.string().email(),
+    created_at: z.date(),
+    updated_at: z.date(),
 });
 
 export const CreateUserSchema = z.object({
     username: z.string().min(2),
-    email: z.email(),
+    email: z.string().email(),
 });
 
 export const PartialUserSchema = CreateUserSchema.partial();
