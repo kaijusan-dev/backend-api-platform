@@ -1,9 +1,9 @@
 import prisma from './prisma.js';
 
 const testUsers = [
-  { email: 'alice@example.com', username: 'alice' },
-  { email: 'bob@example.com', username: 'bob' },
-  { email: 'carol@example.com', username: 'carol' },
+  { email: 'alice@example.com', username: 'alice', passwordHash: 'hash' },
+  { email: 'bob@example.com', username: 'bob', passwordHash: 'hash' },
+  { email: 'carol@example.com', username: 'carol', passwordHash: 'hash' },
 ];
 
 export const seedDatabase = async () => {

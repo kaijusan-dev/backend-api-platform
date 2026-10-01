@@ -9,5 +9,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  postgres_test:
+    image: postgres:16
+    ports:
+      - "1111:5432"
+    container_name: backend-api-postgres-test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: backend_api_platform_test
+    volumes:
+      - postgres_data:/var/lib/postgresql/test_data
+
 volumes:
   postgres_data:

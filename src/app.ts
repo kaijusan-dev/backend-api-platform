@@ -4,6 +4,7 @@ import { usersRouter } from './modules/users/users.routes.js';
 import { PathNotFoundError } from './errors/http.errors.js';
 import { openApiDocument } from './docs/openapi.js';
 import { apiReference } from '@scalar/express-api-reference';
+import { authRouter } from './modules/auth/auth.routes.js';
 
 export const app = express();
 
@@ -18,6 +19,8 @@ app.use('/docs', apiReference({url: '/docs/openapi.json'}));
 app.get('/', (req: Request, res: Response) => {
 	res.send('Hello World!');
 });
+
+app.use('/auth', authRouter);
 
 app.use('/users', usersRouter);
 

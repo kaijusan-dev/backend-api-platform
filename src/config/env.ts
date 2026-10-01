@@ -5,13 +5,15 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().positive(),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     DATABASE_URL: z.string(),
+    DATABASE_URL_TEST: z.string(),
+    JWT_SECRET: z.string()
 })
 
 const _env = envSchema.safeParse(process.env);
 
 if (!_env.success) {
   console.error('Invalid or missing environment variables:');
-  const treeError = z.treeifyError(_env.error);
+  const treeError = _env.error.format();
   console.log(JSON.stringify(treeError, null, 2));
   process.exit(1);
 }

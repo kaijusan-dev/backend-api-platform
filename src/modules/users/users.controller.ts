@@ -8,6 +8,12 @@ export const getUsers = async (req: Request, res: Response) => {
     res.status(200).json(result);
 }
 
+export const getMe = async (req: Request, res: Response) => {
+    const user = await usersService.getUserById(req.user!.userId);
+    const { passwordHash, ...publicUser } = user;
+    res.status(200).json(publicUser);
+}
+
 export const getUserById = async (req: Request, res: Response) => {
     const parsedParams = UserParamsSchema.safeParse(req.params);
 

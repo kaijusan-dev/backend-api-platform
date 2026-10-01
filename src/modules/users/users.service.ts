@@ -13,6 +13,12 @@ export const getUserById = async (id: number) => {
     return user;
 }
 
+export const getUserByUsername = async (username: string) => {
+    const user = await usersRepository.getUserByUsername(username);
+    if (!user) throw new UserNotFoundError();
+    return user;
+}
+
 export const createUser = async (user: CreateUser) => {
     try {
         return await usersRepository.createUser(user);
@@ -26,9 +32,9 @@ export const createUser = async (user: CreateUser) => {
 
 export const updateUser = async (id: number, changedUser: PartialUser) => {
 
-    const { username, email } = changedUser;
+    const { username, email, passwordHash } = changedUser;
 
-    if (!username && !email) throw new BadRequestError();
+    if (!username && !email && !passwordHash) throw new BadRequestError();
 
     try {
         return await usersRepository.updateUser(id, changedUser);

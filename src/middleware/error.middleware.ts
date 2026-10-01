@@ -10,7 +10,7 @@ export const errorMiddleware = (
 ) => {
   const statusCode = err instanceof HttpError ? err.statusCode : 500;
   const message = err.message;
-
+  
   res.status(statusCode).json({
     success: false,
     status: statusCode,

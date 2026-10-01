@@ -1,30 +1,26 @@
-import { describe, test, expect, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import { app } from '../../app.js';
+import prisma from '../../database/prisma.js';
 
 describe('endpoints /users', () => {
 
     let userId: number | null = null;
 
     beforeEach(async () => {
+
+        await prisma.user.deleteMany();
+
         const response = await request(app)
             .post('/users')
             .send({
                 username: 'test',
-                email: 'test@gmail.com'
+                email: 'test@gmail.com',
+                passwordHash: 'testPassword'
             })
             .expect(201);
-        
+            
         userId = response.body.id;
-    });
-
-    afterEach(async () => {
-        if (userId !== null) {
-            await request(app)
-                .delete(`/users/${userId}`)
-                .expect(204);
-            userId = null;
-        }
     });
 
     test('GET /users', async () => {
@@ -62,7 +58,8 @@ describe('endpoints /users', () => {
             .post('/users')
             .send({
                 username: 'test1',
-                email: 'test1@gmail.com'
+                email: 'test1@gmail.com',
+                passwordHash: 'testPassword'
             })
             .expect(201);
 
@@ -79,7 +76,8 @@ describe('endpoints /users', () => {
             .post('/users')
             .send({
                 username: 123,
-                email: 'not email'
+                email: 'not email',
+                passwordHash: 'not password'
             })
             .expect(400);
 
@@ -101,7 +99,8 @@ describe('endpoints /users', () => {
             .post('/users')
             .send({
                 username: 'test',
-                email: 'test@gmail.com'
+                email: 'test@gmail.com',
+                passwordHash: 'testPassword'
             })
             .expect(409);
 
@@ -113,7 +112,8 @@ describe('endpoints /users', () => {
             .patch(`/users/${userId}`)
             .send({
                 username: 'testUpdated',
-                email: 'testUpdated@gmail.com'
+                email: 'testUpdated@gmail.com',
+                passwordHash: 'testPassword'
             })
             .expect(200);
 
@@ -125,11 +125,11 @@ describe('endpoints /users', () => {
         const response = await request(app)
             .patch(`/users/${userId}`)
             .send({
-                username: 'testUpdated',
+                username: 'testPatched',
             })
             .expect(200);
 
-        expect(response.body.username).toBe('testUpdated');
+        expect(response.body.username).toBe('testPatched');
         expect(response.body.email).toBe('test@gmail.com');
     });
 
@@ -138,7 +138,8 @@ describe('endpoints /users', () => {
             .patch(`/users/9999999`)
             .send({
                 username: 'testUpdated',
-                email: 'testUpdated@gmail.com'
+                email: 'testUpdated@gmail.com',
+                passwordHash: 'testUpdated'
             })
             .expect(404);
     });
@@ -148,7 +149,8 @@ describe('endpoints /users', () => {
             .patch(`/users/invalid`)
             .send({
                 username: 'testUpdated',
-                email: 'testUpdated@gmail.com'
+                email: 'testUpdated@gmail.com',
+                passwordHash: 'testUpdated'
             })
             .expect(400);
     });
@@ -158,7 +160,8 @@ describe('endpoints /users', () => {
             .patch(`/users/${userId}`)
             .send({
                 username: 123,
-                email: 'not email'
+                email: 'not email',
+                passwordHash: 123
             })
             .expect(400);
     });
@@ -176,7 +179,8 @@ describe('endpoints /users', () => {
             .post('/users')
             .send({
                 username: 'test2',
-                email: 'test2@gmail.com'
+                email: 'test2@gmail.com',
+                passwordHash: 'testPassword'
             })
             .expect(201);
 
@@ -184,7 +188,7 @@ describe('endpoints /users', () => {
             .patch(`/users/${userId}`)
             .send({
                 username: 'test2',
-                email: 'test2@gmail.com'
+                email: 'test2@gmail.com',
             })
             .expect(409);
 

@@ -3,8 +3,14 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { env } from "../config/env.js";
 
+const isTest = process.env.VITEST === 'true';
+
+const connectionString = isTest 
+    ? env.DATABASE_URL_TEST
+    : env.DATABASE_URL;
+
 const pool = new Pool({
-  connectionString: env.DATABASE_URL,
+  connectionString
 });
 
 const adapter = new PrismaPg(pool);
@@ -19,8 +25,6 @@ export const checkPrismaStatus = async () => {
   } catch (error) {
     console.error('Ошибка подключения к базе данных через Prisma');
     return false;
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
