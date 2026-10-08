@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "prisma:migrate:dev": "npx prisma migrate dev",
+    "prisma:migrate:test": "cross-env DATABASE_URL=\"$DATABASE_URL_TEST\" npx prisma migrate dev",
+    "prisma:push:test": "cross-env DATABASE_URL=\"$DATABASE_URL_TEST\" npx prisma db push",
+    "prisma:reset:test": "cross-env DATABASE_URL=\"$DATABASE_URL_TEST\" npx prisma migrate reset --force"
   },
   "repository": {
     "type": "git",
@@ -26,6 +30,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.1",
     "@types/supertest": "^7.2.1",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",
     "prisma": "^7.10.0",
     "supertest": "^7.2.2",

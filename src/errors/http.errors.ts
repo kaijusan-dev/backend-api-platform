@@ -39,6 +39,6 @@ export class ConflictError extends HttpError {
 
 export class UnauthorizedError extends HttpError {
     constructor(message: string) {
-        super('ConflictError', message, 401);
+        super('UnauthorizedError', message, 401);
     };
 };

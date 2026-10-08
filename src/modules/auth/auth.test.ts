@@ -4,6 +4,7 @@ import { app } from '../../app.js';
 import prisma from '../../database/prisma.js';
 import jwt from 'jsonwebtoken';
 import { env } from '../../config/env.js';
+import bcrypt from 'bcrypt';
 
 describe('Auth & Users endpoints', () => {
 
@@ -11,18 +12,20 @@ describe('Auth & Users endpoints', () => {
 
     beforeEach(async () => {
 
+        await prisma.refreshToken.deleteMany();
         await prisma.user.deleteMany();
 
-        const response = await request(app)
-            .post('/auth/register')
-            .send({
+        const passwordHash = await bcrypt.hash('testPassword', 10);
+
+        const user = await prisma.user.create({
+            data: {
                 username: 'test',
                 email: 'test@gmail.com',
-                password: 'testPassword'
-            })
-            .expect(201);
+                passwordHash
+            }
+        });
         
-        userId = response.body.user.id;
+        userId = user.id;
     });
 
     test('POST /auth/register', async () => {
@@ -39,10 +42,6 @@ describe('Auth & Users endpoints', () => {
         expect(response.body.user.email).toBe('registerTest@gmail.com');
         expect(response.body.user.passwordHash).toBeUndefined();
         expect(response.body).toHaveProperty('accessToken');
-
-        await request(app)
-            .delete(`/users/${response.body.user.id}`)
-            .expect(204);
     });
 
     test('POST /auth/register - conflict', async () => {
@@ -104,6 +103,78 @@ describe('Auth & Users endpoints', () => {
                 password: 'testPassword'
             })
             .expect(404);
+    });
+
+    test('POST /auth/refresh', async () => {
+
+        const loginResponse = await request(app)
+            .post('/auth/login')
+            .send({
+                username: 'test',
+                password: 'testPassword'
+            })
+            .expect(200);
+            
+        const refreshToken = loginResponse.body.refreshToken;
+
+        const response = await request(app)
+            .post('/auth/refresh')
+            .send({
+                refreshToken
+            })
+            .expect(200);
+
+        expect(response.body.accessToken).toBeDefined();
+        expect(response.body.refreshToken).toBeDefined();
+    });
+
+    test('POST /auth/refresh - deleted token', async () => {
+        const loginResponse1 = await request(app)
+            .post('/auth/login')
+            .send({
+                username: 'test',
+                password: 'testPassword'
+            })
+            .expect(200);
+            
+        const refreshToken1 = loginResponse1.body.refreshToken;
+
+        await prisma.refreshToken.delete({
+            where: { token: refreshToken1 }
+        });
+
+        const response = await request(app)
+            .post('/auth/refresh')
+            .send({
+                refreshToken: refreshToken1
+            })
+            .expect(401);
+
+        expect(response.body.message).toBe('token_expired'); 
+    });
+
+    test('POST /auth/refresh - invalid token', async () => {
+        await request(app)
+            .post('/auth/refresh')
+            .send({
+                refreshToken: 'some invalid token'
+            })
+            .expect(401);
+    });
+
+    test('POST /auth/refresh - expired token', async () => {
+        const expiredToken = jwt.sign(
+            { userId },
+            env.JWT_SECRET,
+            { expiresIn: -1 }
+        );
+
+        await request(app)
+            .post('/auth/refresh')
+            .send({
+                refreshToken: expiredToken
+            })
+            .expect(401);
     });
 
     test('GET /users/me', async () => {

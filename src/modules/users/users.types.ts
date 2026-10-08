@@ -19,18 +19,11 @@ export const CreateUserSchema = z.object({
     passwordHash: z.string()
 });
 
-export const RegisterUserSchema = z.object({
-    username: z.string().min(2),
-    email: z.string().email(),
-    password: z.string().min(6).max(18)
-});
 
 export const PartialUserSchema = CreateUserSchema.partial();
 
 export type User = z.infer<typeof UserSchema>;
 
 export type CreateUser = z.infer<typeof CreateUserSchema>;
-
-export type RegisterUser = z.infer<typeof RegisterUserSchema>;
 
 export type PartialUser = z.infer<typeof PartialUserSchema>;
