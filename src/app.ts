@@ -5,10 +5,13 @@ import { PathNotFoundError } from './errors/http.errors.js';
 import { openApiDocument } from './docs/openapi.js';
 import { apiReference } from '@scalar/express-api-reference';
 import { authRouter } from './modules/auth/auth.routes.js';
+import { httpLogger } from './middleware/http-logger.middleware.js';
 
 export const app = express();
 
 app.use(express.json())
+
+app.use(httpLogger);
 
 app.get('/docs/openapi.json', (req, res) => {
     res.json(openApiDocument);

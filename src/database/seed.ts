@@ -1,3 +1,4 @@
+import { logger } from '../config/logger.js';
 import prisma from './prisma.js';
 
 const testUsers = [
@@ -11,7 +12,7 @@ export const seedDatabase = async () => {
 
   if (usersCount > 0) return;
 
-  console.log('Таблица users пуста, добавляю тестовые данные...');
+  logger.info('Users table is empty, making test data...');
   await prisma.user.createMany({ data: testUsers });
-  console.log(`Добавлено ${testUsers.length} тестовых пользователей.`);
+  logger.info(`Added ${testUsers.length} test users`);
 };

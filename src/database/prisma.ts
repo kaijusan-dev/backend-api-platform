@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { env } from "../config/env.js";
+import { logger } from "../config/logger.js";
 
 const isTest = process.env.VITEST === 'true';
 
@@ -18,12 +19,20 @@ const prisma = new PrismaClient({ adapter });
 
 export const checkPrismaStatus = async () => {
   try {
+
     // простой запрос к базе для проверки работоспособности
     await prisma.$queryRaw`SELECT 1`;
-    console.log('Prisma и база данных работают нормально!');
+
+    logger.info('Prisma and database are working');
+
     return true;
+
   } catch (error) {
-    console.error('Ошибка подключения к базе данных через Prisma');
+
+    const errorMessage = error instanceof Error ? error.stack : String(error);
+
+    logger.error(`Ошибка подключения к базе данных через Prisma\n${errorMessage}`);
+
     return false;
   }
 }
