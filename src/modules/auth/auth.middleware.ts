@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken'
-import { env } from '../config/env.js';
-import { UnauthorizedError } from '../errors/http.errors.js';
-import type { JwtPayload } from '../modules/auth/auth.types.js';
+import { env } from '../../shared/config/env.js';
+import { UnauthorizedError } from '../../shared/errors/http.errors.js';
+import type { JwtPayload } from './auth.types.js';
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 

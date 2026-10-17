@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import { app } from '../../app.js';
-import prisma from '../../database/prisma.js';
+import prisma from '../../shared/database/prisma.js';
 
 describe('endpoints /users', () => {
 

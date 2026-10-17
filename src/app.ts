@@ -1,11 +1,11 @@
 import express, { type Request, type Response } from 'express';
-import { errorMiddleware } from './middleware/error.middleware.js';
 import { usersRouter } from './modules/users/users.routes.js';
-import { PathNotFoundError } from './errors/http.errors.js';
-import { openApiDocument } from './docs/openapi.js';
-import { apiReference } from '@scalar/express-api-reference';
+import { PathNotFoundError } from './shared/errors/http.errors.js';
 import { authRouter } from './modules/auth/auth.routes.js';
-import { httpLogger } from './middleware/http-logger.middleware.js';
+import { setupDocs } from './shared/docs/openapi.js';
+import { httpLogger } from './shared/middleware/http-logger.middleware.js';
+import { apiContract } from './api.contract.js';
+import { errorMiddleware } from './shared/middleware/error.middleware.js';
 
 export const app = express();
 
@@ -13,11 +13,7 @@ app.use(express.json())
 
 app.use(httpLogger);
 
-app.get('/docs/openapi.json', (req, res) => {
-    res.json(openApiDocument);
-});
-
-app.use('/docs', apiReference({url: '/docs/openapi.json'}));
+setupDocs(app, apiContract);
 
 app.get('/', (req: Request, res: Response) => {
 	res.send('Hello World!');

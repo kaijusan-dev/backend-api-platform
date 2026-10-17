@@ -1,5 +1,5 @@
 import { initContract } from '@ts-rest/core';
-import { ErrorResponseSchema } from '../../errors/error.schema.js';
+import { ErrorResponseSchema } from '../../shared/errors/error.schema.js';
 import { AuthResponseSchema, LoginUserSchema, RefreshTokenResponseSchema, RefreshTokenSchema, RegisterUserSchema } from './auth.types.js';
 
 const c = initContract();

@@ -5,6 +5,14 @@ export type JwtPayload = {
     userId: number
 }
 
+declare global {
+    namespace Express {
+        interface Request {
+            user?: JwtPayload;
+        }
+    }
+}
+
 export type RefreshToken = {
     token: string,
     userId: number,

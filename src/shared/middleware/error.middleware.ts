@@ -1,6 +1,6 @@
 import { type Request, type Response, type NextFunction  } from 'express';
-import { HttpError } from '../errors/http.errors.js';
 import { env } from '../config/env.js';
+import { HttpError } from '../errors/http.errors.js';
 
 export const errorMiddleware = (
   err: Error,

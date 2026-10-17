@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const UserParamsSchema = z.object({
-    id: z.coerce.number().min(1),
+    id: z.coerce.number().int().min(1),
 });
 
 export const UserSchema = z.object({
@@ -9,8 +9,8 @@ export const UserSchema = z.object({
     username: z.string().min(2),
     email: z.string().email(),
     passwordHash: z.string().min(6),
-    created_at: z.date(),
-    updated_at: z.date(),
+    created_at: z.string().datetime(),
+    updated_at: z.string().datetime(),
 });
 
 export const CreateUserSchema = z.object({
@@ -31,15 +31,28 @@ export const PaginationMetaSchema = z.object({
   totalPages: z.number(),
 });
 
+export const UserResponseSchema = z.object({
+    id: z.number(),
+    username: z.string().min(2),
+    email: z.string().email(),
+    created_at: z.string().datetime(),
+    updated_at: z.string().datetime(),
+});
+
 export const UsersResponseSchema = z.object({
-  data: z.array(UserSchema),
+  data: z.array(UserResponseSchema),
   meta: PaginationMetaSchema,
 });
 
-export const PartialUserSchema = CreateUserSchema.partial();
+export const UpdateUserSchema = z.object({
+    username: z.string().min(2).optional(),
+    email: z.string().email().optional(),
+});
 
 export type User = z.infer<typeof UserSchema>;
 
+export type PublicUser = Omit<User, 'passwordHash'>;
+
 export type CreateUser = z.infer<typeof CreateUserSchema>;
 
-export type PartialUser = z.infer<typeof PartialUserSchema>;
+export type UpdateUser = z.infer<typeof UpdateUserSchema>;

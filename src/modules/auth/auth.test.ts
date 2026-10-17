@@ -1,9 +1,9 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import { app } from '../../app.js';
-import prisma from '../../database/prisma.js';
+import prisma from '../../shared/database/prisma.js';
 import jwt from 'jsonwebtoken';
-import { env } from '../../config/env.js';
+import { env } from '../../shared/config/env.js';
 import bcrypt from 'bcrypt';
 
 describe('Auth & Users endpoints', () => {

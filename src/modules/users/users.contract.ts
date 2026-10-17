@@ -1,6 +1,6 @@
 import { initContract } from '@ts-rest/core';
-import { ErrorResponseSchema } from '../../errors/error.schema.js';
-import { CreateUserSchema, PaginationQuerySchema, PartialUserSchema, UserParamsSchema, UserSchema, UsersResponseSchema } from './users.types.js';
+import { ErrorResponseSchema } from '../../shared/errors/error.schema.js';
+import { CreateUserSchema, PaginationQuerySchema, UpdateUserSchema, UserParamsSchema, UserResponseSchema, UsersResponseSchema } from './users.types.js';
 import { z } from 'zod';
 
 const c = initContract();
@@ -20,7 +20,7 @@ export const usersContract = c.router({
         path: '/users/:id',
         pathParams: UserParamsSchema,
         responses: {
-            200: UserSchema,
+            200: UserResponseSchema,
             400: ErrorResponseSchema,
             404: ErrorResponseSchema,
         },
@@ -30,7 +30,7 @@ export const usersContract = c.router({
         path: '/users',
         body: CreateUserSchema,
         responses: {
-            201: UserSchema,
+            201: UserResponseSchema,
             409: ErrorResponseSchema,
             400: ErrorResponseSchema,
         },
@@ -39,9 +39,9 @@ export const usersContract = c.router({
         method: 'PATCH',
         path: '/users/:id',
         pathParams: UserParamsSchema,
-        body: PartialUserSchema,
+        body: UpdateUserSchema,
         responses: {
-            200: UserSchema,
+            200: UserResponseSchema,
             409: ErrorResponseSchema,
             400: ErrorResponseSchema,
             404: ErrorResponseSchema,

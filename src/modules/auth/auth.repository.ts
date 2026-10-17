@@ -1,4 +1,4 @@
-import prisma from '../../database/prisma.js';
+import prisma from '../../shared/database/prisma.js';
 import type { RefreshToken } from './auth.types.js';
 
 export const createRefreshToken = async (refreshToken: RefreshToken) => {

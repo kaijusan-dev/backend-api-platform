@@ -1,8 +1,8 @@
 import { app } from "./app.js";
-import { checkPrismaStatus } from "./database/prisma.js";
-import { seedDatabase } from "./database/seed.js";
-import { env } from './config/env.js';
-import { logger } from "./config/logger.js";
+import { checkPrismaStatus } from "./shared/database/prisma.js";
+import { seedDatabase } from "./shared/database/seed.js";
+import { env } from './shared/config/env.js';
+import { logger } from "./shared/config/logger.js";
 
 const startApp = async () => {
 

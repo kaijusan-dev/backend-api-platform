@@ -2,9 +2,9 @@ import * as usersService from '../users/users.service.js';
 import * as authRepository from './auth.repository.js';
 import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { env } from "../../config/env.js";
+import { env } from "../../shared/config/env.js";
 import type { JwtPayload, LoginUser, RefreshToken, RegisterUser } from "./auth.types.js";
-import { UnauthorizedError } from '../../errors/http.errors.js';
+import { UnauthorizedError } from '../../shared/errors/http.errors.js';
 
 export const registerUser = async (user: RegisterUser) => {
 

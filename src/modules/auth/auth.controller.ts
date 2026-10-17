@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express';
 import * as authService from './auth.service.js';
-import { BadRequestError } from '../../errors/http.errors.js';
+import { BadRequestError } from '../../shared/errors/http.errors.js';
 import { LoginUserSchema, RefreshTokenSchema, RegisterUserSchema } from './auth.types.js';
 
 export const registerUser = async (req: Request, res: Response) => {

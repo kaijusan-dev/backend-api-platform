@@ -1,5 +1,5 @@
-import prisma from "../../database/prisma.js";
-import type { CreateUser, PartialUser } from "./users.types.js";
+import prisma from "../../shared/database/prisma.js";
+import type { CreateUser, UpdateUser } from "./users.types.js";
 
 export const getUsers = async (skip: number, take: number) => {
     return prisma.$transaction([
@@ -32,10 +32,10 @@ export const createUser = async (user: CreateUser) => {
     return prisma.user.create({ data: user });
 }
 
-export const updateUser = async (id: number, changedUser: PartialUser) => {
+export const updateUser = async (id: number, user: UpdateUser) => {
     // Удаляем из объекта все поля, которые имеют значение undefined, 
     const updateData = Object.fromEntries(
-        Object.entries(changedUser).filter(([_, value]) => value !== undefined)
+        Object.entries(user).filter(([_, value]) => value !== undefined)
     );
 
     return prisma.user.update({
@@ -43,7 +43,6 @@ export const updateUser = async (id: number, changedUser: PartialUser) => {
         data: updateData,
     });
 };
-
 
 export const deleteUser = async (id: number) => {
     return prisma.user.delete({
