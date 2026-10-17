@@ -1,6 +1,6 @@
 import { initContract } from '@ts-rest/core';
 import { ErrorResponseSchema } from '../../errors/error.schema.js';
-import { CreateUserSchema, PartialUserSchema, UserParamsSchema, UserSchema } from './users.types.js';
+import { CreateUserSchema, PaginationQuerySchema, PartialUserSchema, UserParamsSchema, UserSchema, UsersResponseSchema } from './users.types.js';
 import { z } from 'zod';
 
 const c = initContract();
@@ -9,8 +9,10 @@ export const usersContract = c.router({
     getUsers: {
         method: 'GET',
         path: '/users',
+        query: PaginationQuerySchema,
         responses: {
-            200: z.array(UserSchema),
+            200: UsersResponseSchema,
+            400: ErrorResponseSchema
         },
     },
     getUser: {

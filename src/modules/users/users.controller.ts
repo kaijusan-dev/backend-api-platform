@@ -1,16 +1,33 @@
 import { type Request, type Response } from 'express';
 import * as usersService from './users.service.js';
-import { CreateUserSchema, PartialUserSchema, UserParamsSchema } from './users.types.js';
+import { CreateUserSchema, PaginationQuerySchema, PartialUserSchema, UserParamsSchema } from './users.types.js';
 import { BadRequestError } from '../../errors/http.errors.js';
 
 export const getUsers = async (req: Request, res: Response) => {
-    const result = await usersService.getUsers();
-    res.status(200).json(result);
+    const query = PaginationQuerySchema.safeParse(req.query);
+
+    if (!query.success) throw new BadRequestError();
+
+    const [users, total] = await usersService.getUsers(query.data.page, query.data.limit);
+
+    const totalPages = Math.ceil(total / query.data.limit); 
+
+    res.status(200).json({
+        data: users,
+        meta: {
+            page: query.data.page,
+            limit: query.data.limit,
+            total,
+            totalPages,
+        },
+    });
 }
 
 export const getMe = async (req: Request, res: Response) => {
     const user = await usersService.getUserById(req.user!.userId);
+
     const { passwordHash, ...publicUser } = user;
+
     res.status(200).json(publicUser);
 }
 

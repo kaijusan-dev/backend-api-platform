@@ -1,8 +1,8 @@
 import { generateOpenApi } from '@ts-rest/open-api';
-import { usersContract } from '../modules/users/users.contract.js';
+import { apiContract } from '../api.contract.js';
 
 export const openApiDocument = generateOpenApi(
-    usersContract,
+    apiContract,
     {
         info: {
             title: 'Backend API Platform',

@@ -1,12 +1,15 @@
 import prisma from "../../database/prisma.js";
 import type { CreateUser, PartialUser } from "./users.types.js";
 
-export const getUsers = async () => {
-    return prisma.user.findMany({
-        orderBy: {
-            id: 'asc'
-        }
-    });
+export const getUsers = async (skip: number, take: number) => {
+    return prisma.$transaction([
+        prisma.user.findMany({
+            skip,
+            take,
+            orderBy: { id: 'asc' },
+        }),
+        prisma.user.count(),
+    ]);
 }
 
 export const getUserById = async (id: number) => {

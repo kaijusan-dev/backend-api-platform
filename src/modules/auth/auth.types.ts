@@ -1,4 +1,5 @@
 import z from "zod";
+import { UserSchema } from "../users/users.types.js";
 
 export type JwtPayload = {
     userId: number
@@ -21,9 +22,20 @@ export const LoginUserSchema = z.object({
     password: z.string().min(6),
 });
 
+export const AccessTokenSchema = z.object({
+    accessToken: z.string().min(2),
+});
+
 export const RefreshTokenSchema = z.object({
     refreshToken: z.string().min(2),
 });
+
+export const AuthResponseSchema = z.object({ user: UserSchema })
+  .merge(AccessTokenSchema)
+  .merge(RefreshTokenSchema);
+
+export const RefreshTokenResponseSchema = AccessTokenSchema
+  .merge(RefreshTokenSchema);
 
 export type RegisterUser = z.infer<typeof RegisterUserSchema>;
 

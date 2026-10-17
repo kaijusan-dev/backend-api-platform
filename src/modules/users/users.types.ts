@@ -16,9 +16,25 @@ export const UserSchema = z.object({
 export const CreateUserSchema = z.object({
     username: z.string().min(2),
     email: z.string().email(),
-    passwordHash: z.string()
+    passwordHash: z.string(),
 });
 
+export const PaginationQuerySchema = z.object({
+    page: z.coerce.number().int().min(1).default(1),
+    limit: z.coerce.number().int().min(1).max(100).default(10),
+});
+
+export const PaginationMetaSchema = z.object({
+  page: z.number(),
+  limit: z.number(),
+  total: z.number(),
+  totalPages: z.number(),
+});
+
+export const UsersResponseSchema = z.object({
+  data: z.array(UserSchema),
+  meta: PaginationMetaSchema,
+});
 
 export const PartialUserSchema = CreateUserSchema.partial();
 

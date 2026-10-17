@@ -3,8 +3,9 @@ import { BadRequestError, ConflictError, UserNotFoundError } from "../../errors/
 import type { CreateUser, PartialUser } from "./users.types.js";
 import * as usersRepository from './users.repository.js';
 
-export const getUsers = async () => {
-    return await usersRepository.getUsers();
+export const getUsers = async (page: number, limit: number) => {
+    const skip = (page - 1) * limit;
+    return usersRepository.getUsers(skip, limit);
 }
 
 export const getUserById = async (id: number) => {

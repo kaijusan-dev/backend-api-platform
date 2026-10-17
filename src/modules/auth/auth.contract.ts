@@ -1,58 +1,38 @@
 import { initContract } from '@ts-rest/core';
 import { ErrorResponseSchema } from '../../errors/error.schema.js';
-import { CreateUserSchema, PartialUserSchema, UserParamsSchema, UserSchema } from './users.types.js';
-import { z } from 'zod';
+import { AuthResponseSchema, LoginUserSchema, RefreshTokenResponseSchema, RefreshTokenSchema, RegisterUserSchema } from './auth.types.js';
 
 const c = initContract();
 
-export const usersContract = c.router({
-    getUsers: {
-        method: 'GET',
-        path: '/users',
-        responses: {
-            200: z.array(UserSchema),
-        },
-    },
-    getUser: {
-        method: 'GET',
-        path: '/users/:id',
-        pathParams: UserParamsSchema,
-        responses: {
-            200: UserSchema,
-            400: ErrorResponseSchema,
-            404: ErrorResponseSchema,
-        },
-    },
-    createUser: {
+export const authContract = c.router({
+    registerUser: {
         method: 'POST',
-        path: '/users',
-        body: CreateUserSchema,
+        path: '/auth/register',
+        body: RegisterUserSchema,
         responses: {
-            201: UserSchema,
+            201: AuthResponseSchema,
             409: ErrorResponseSchema,
             400: ErrorResponseSchema,
         },
     },
-    updateUser: {
-        method: 'PATCH',
-        path: '/users/:id',
-        pathParams: UserParamsSchema,
-        body: PartialUserSchema,
+    loginUser: {
+        method: 'POST',
+        path: '/auth/login',
+        body: LoginUserSchema,
         responses: {
-            200: UserSchema,
-            409: ErrorResponseSchema,
+            200: AuthResponseSchema,
             400: ErrorResponseSchema,
-            404: ErrorResponseSchema,
+            401: ErrorResponseSchema,
         },
     },
-    deleteUser: {
-        method: 'DELETE',
-        path: '/users/:id',
-        pathParams: UserParamsSchema,
+    refreshToken: {
+        method: 'POST',
+        path: '/auth/refresh',
+        body: RefreshTokenSchema,
         responses: {
-            204: z.void(),
+            200: RefreshTokenResponseSchema,
             400: ErrorResponseSchema,
-            404: ErrorResponseSchema,
+            401: ErrorResponseSchema,
         },
     },
 });
