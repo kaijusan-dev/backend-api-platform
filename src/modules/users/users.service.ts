@@ -1,17 +1,32 @@
 import { Prisma } from "@prisma/client";
-import type { CreateUser, UpdateUser } from "./users.types.js";
+import type { CreateUser, Query, QueryForDb, UpdateUser } from "./users.types.js";
 import * as usersRepository from './users.repository.js';
-import { exclude } from "../../shared/utils/exclude.js";
 import { BadRequestError, ConflictError, UserNotFoundError } from "../../shared/errors/http.errors.js";
 
-export const getUsers = async (page: number, limit: number) => {
+export const getUsers = async (query: Query) => {
+    const { page, limit, username, sortBy, orderBy } = query;
+
     const skip = (page - 1) * limit;
 
-    const [users, total] = await usersRepository.getUsers(skip, limit);
+    const where = username ? { 
+        username: { 
+            contains: username, 
+            mode: "insensitive",
+        } 
+    } : undefined ;
 
-    const publicUsers = exclude(users, ['passwordHash']);
+    const prismaOrderBy = sortBy ? { [sortBy]: orderBy ?? "asc"} : undefined;
 
-    return { publicUsers, total };
+    const queryForDb: QueryForDb = {
+        skip,
+        take: limit,
+        orderBy: prismaOrderBy,
+        where
+    }
+
+    const [users, total] = await usersRepository.getUsers(queryForDb);
+
+    return { users, total };
 }
 
 export const getUserById = async (id: number) => {
@@ -19,9 +34,7 @@ export const getUserById = async (id: number) => {
 
     if (!user) throw new UserNotFoundError();
 
-    const publicUser = exclude(user, ['passwordHash']);
-
-    return publicUser;
+    return user;
 }
 
 export const getUserByUsername = async (username: string) => {
@@ -29,18 +42,12 @@ export const getUserByUsername = async (username: string) => {
 
     if (!user) throw new UserNotFoundError();
 
-    const publicUser = exclude(user, ['passwordHash']);
-
-    return publicUser;
+    return user;
 }
 
 export const createUser = async (user: CreateUser) => {
     try {
-        const createdUser = await usersRepository.createUser(user);
-
-        const publicUser = exclude(createdUser, ['passwordHash']);
-
-        return publicUser;
+        return await usersRepository.createUser(user);
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             throw new ConflictError('Пользователь с таким username или email уже существует');
@@ -56,11 +63,7 @@ export const updateUser = async (id: number, user: UpdateUser) => {
     if (!username && !email) throw new BadRequestError();
 
     try {
-        const updatedUser = await usersRepository.updateUser(id, user);
-
-        const publicUser = exclude(updatedUser, ['passwordHash']);
-
-        return publicUser;
+        return await usersRepository.updateUser(id, user);
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new UserNotFoundError();

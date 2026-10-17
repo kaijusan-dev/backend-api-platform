@@ -3,12 +3,13 @@ import * as authRepository from './auth.repository.js';
 import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { env } from "../../shared/config/env.js";
-import type { JwtPayload, LoginUser, RefreshToken, RegisterUser } from "./auth.types.js";
+import type { JwtPayload, LoginUser, RegisterUser } from "./auth.types.js";
 import { UnauthorizedError } from '../../shared/errors/http.errors.js';
+import { exclude } from '../../shared/utils/exclude.js';
 
 export const registerUser = async (user: RegisterUser) => {
 
-    const { password, ...userWithoutPassword } = user;
+    const userWithoutPassword = exclude(user, ["password"]);
 
     const userDataForDb = {
         ...userWithoutPassword,
@@ -21,7 +22,7 @@ export const registerUser = async (user: RegisterUser) => {
 
     const refreshToken = await generateRefreshToken(createdUser.id);
 
-    const { passwordHash, ...publicUser } = createdUser;
+    const publicUser = exclude(createdUser, ['passwordHash']);
 
     return {
         user: publicUser,
@@ -45,7 +46,7 @@ export const loginUser = async (data: LoginUser) => {
 
     const refreshToken = await generateRefreshToken(user.id);
 
-    const { passwordHash, ...publicUser } = user;
+    const publicUser = exclude(user, ['passwordHash']);
 
     return {
         user: publicUser,

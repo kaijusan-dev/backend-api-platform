@@ -1,14 +1,12 @@
 import prisma from "../../shared/database/prisma.js";
-import type { CreateUser, UpdateUser } from "./users.types.js";
+import type { CreateUser, QueryForDb, UpdateUser } from "./users.types.js";
 
-export const getUsers = async (skip: number, take: number) => {
+export const getUsers = async (queryForDb: QueryForDb) => {
     return prisma.$transaction([
-        prisma.user.findMany({
-            skip,
-            take,
-            orderBy: { id: 'asc' },
+        prisma.user.findMany({ ...queryForDb }),
+        prisma.user.count({
+            where: queryForDb.where
         }),
-        prisma.user.count(),
     ]);
 }
 

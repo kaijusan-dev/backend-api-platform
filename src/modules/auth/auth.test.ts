@@ -15,7 +15,7 @@ describe('Auth & Users endpoints', () => {
         await prisma.refreshToken.deleteMany();
         await prisma.user.deleteMany();
 
-        const passwordHash = await bcrypt.hash('testPassword', 10);
+        const passwordHash = await bcrypt.hash('testPassword', 1);
 
         const user = await prisma.user.create({
             data: {
