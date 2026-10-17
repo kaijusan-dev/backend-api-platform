@@ -19,19 +19,15 @@ const prisma = new PrismaClient({ adapter });
 
 export const checkPrismaStatus = async () => {
   try {
-
     // простой запрос к базе для проверки работоспособности
     await prisma.$queryRaw`SELECT 1`;
 
-    logger.info('Prisma and database are working');
+    logger.info('Успешное подключение к базе данных через Prisma');
 
     return true;
 
   } catch (error) {
-
-    const errorMessage = error instanceof Error ? error.stack : String(error);
-
-    logger.error(`Ошибка подключения к базе данных через Prisma\n${errorMessage}`);
+    logger.error({ err: error }, 'Ошибка подключения к базе данных через Prisma');
 
     return false;
   }

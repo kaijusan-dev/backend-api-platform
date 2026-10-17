@@ -106,18 +106,23 @@ describe('endpoints /users', () => {
         const response = await request(app)
             .get('/users?username=unknown')
             .expect(200);
+
         expect(response.body.data).toEqual([]);
         expect(response.body.meta.total).toBe(0);
         expect(response.body.meta.totalPages).toBe(0);
     });
 
     test('GET /users - invalid sortBy / orderBy', async () => {
-        await request(app)
+        const response1 = await request(app)
             .get('/users?sortBy=unknown')
             .expect(400);
-        await request(app)
+
+        const response2 = await request(app)
             .get('/users?sortBy=id&orderBy=unknown')
             .expect(400);
+
+        expect(response1.body.code).toBe('VALIDATION_ERROR');
+        expect(response2.body.code).toBe('VALIDATION_ERROR');
     });
 
     test('GET /users/:id', async () => {
@@ -130,15 +135,19 @@ describe('endpoints /users', () => {
     });
 
     test('GET /users/:id - user not found', async () => {
-        await request(app)
+        const response = await request(app)
             .get('/users/99999999')
             .expect(404);
+
+        expect(response.body.code).toBe('USER_NOT_FOUND');
     });
 
     test('GET /users/:id - invalid id', async () => {
-        await request(app)
+        const response = await request(app)
             .get('/users/invalid')
             .expect(400);
+
+        expect(response.body.code).toBe('VALIDATION_ERROR');
     });
 
     test('POST /users', async () => {
@@ -160,7 +169,7 @@ describe('endpoints /users', () => {
     });
 
     test('POST /users - invalid body', async () => {
-        await request(app)
+        const response = await request(app)
             .post('/users')
             .send({
                 username: 123,
@@ -168,13 +177,17 @@ describe('endpoints /users', () => {
                 passwordHash: 'not password'
             })
             .expect(400);
+
+        expect(response.body.code).toBe('VALIDATION_ERROR');
     });
 
     test('POST /users - empty body', async () => {
-        await request(app)
+        const response = await request(app)
             .post('/users')
             .send({})
             .expect(400);
+
+        expect(response.body.code).toBe('VALIDATION_ERROR');
     });
 
     test('POST /users - conflict', async () => {
@@ -188,7 +201,7 @@ describe('endpoints /users', () => {
             })
             .expect(201);
 
-        await request(app)
+        const response = await request(app)
             .post('/users')
             .send({
                 username: 'test123',
@@ -196,6 +209,8 @@ describe('endpoints /users', () => {
                 passwordHash: 'testPassword'
             })
             .expect(409);
+
+        expect(response.body.code).toBe('CONFLICT');
     });
 
     test('PATCH /users/:id - all fields', async () => {
@@ -225,7 +240,7 @@ describe('endpoints /users', () => {
     });
 
     test('PATCH /users/:id - user not found', async () => {
-        await request(app)
+        const response = await request(app)
             .patch(`/users/9999999`)
             .send({
                 username: 'testUpdated',
@@ -233,10 +248,12 @@ describe('endpoints /users', () => {
                 passwordHash: 'testUpdated'
             })
             .expect(404);
+
+        expect(response.body.code).toBe('USER_NOT_FOUND');
     });
 
     test('PATCH /users/:id - invalid id', async () => {
-        await request(app)
+        const response = await request(app)
             .patch(`/users/invalid`)
             .send({
                 username: 'testUpdated',
@@ -244,10 +261,12 @@ describe('endpoints /users', () => {
                 passwordHash: 'testUpdated'
             })
             .expect(400);
+
+        expect(response.body.code).toBe('VALIDATION_ERROR');    
     });
 
     test('PATCH /users/:id - invalid body', async () => {
-        await request(app)
+        const response = await request(app)
             .patch(`/users/${userId}`)
             .send({
                 username: 123,
@@ -255,13 +274,17 @@ describe('endpoints /users', () => {
                 passwordHash: 123
             })
             .expect(400);
+        
+        expect(response.body.code).toBe('VALIDATION_ERROR');      
     });
 
     test('PATCH /users/:id - empty body', async () => {
-        await request(app)
+        const response = await request(app)
             .patch(`/users/${userId}`)
             .send({})
             .expect(400);
+
+        expect(response.body.code).toBe('VALIDATION_ERROR');   
     });
 
     test('PATCH /users/:id - conflict', async () => {
@@ -275,13 +298,15 @@ describe('endpoints /users', () => {
             })
             .expect(201);
 
-        await request(app)
+        const response = await request(app)
             .patch(`/users/${userId}`)
             .send({
                 username: 'test123',
                 email: 'test123@gmail.com',
             })
             .expect(409);
+
+        expect(response.body.code).toBe('CONFLICT');    
 
         await request(app)
             .delete(`/users/${user2.body.id}`)
@@ -296,9 +321,10 @@ describe('endpoints /users', () => {
     });
 
     test('DELETE /users/:id - user not found', async () => {
-
-        await request(app)
+        const response = await request(app)
             .delete(`/users/9999999`)
             .expect(404);
+
+        expect(response.body.code).toBe('USER_NOT_FOUND');
     });
 })

@@ -46,7 +46,7 @@ describe('Auth & Users endpoints', () => {
 
     test('POST /auth/register - conflict', async () => {
 
-        await request(app)
+        const response = await request(app)
             .post('/auth/register')
             .send({
                 username: 'test',
@@ -54,10 +54,12 @@ describe('Auth & Users endpoints', () => {
                 password: 'testPassword'
             })
             .expect(409);
+
+        expect(response.body.code).toBe('CONFLICT');
     });
 
     test('POST /auth/register - invalid body', async () => {
-        await request(app)
+        const response = await request(app)
             .post('/auth/register')
             .send({
                 username: 123,
@@ -65,6 +67,8 @@ describe('Auth & Users endpoints', () => {
                 password: 123
             })
             .expect(400);
+
+        expect(response.body.code).toBe('VALIDATION_ERROR');
     });
 
     test('POST /auth/login', async () => {
@@ -85,24 +89,28 @@ describe('Auth & Users endpoints', () => {
 
     test('POST /auth/login - wrong password', async () => {
 
-        await request(app)
+        const response = await request(app)
             .post('/auth/login')
             .send({
                 username: 'test',
                 password: 'wrongPassword'
             })
             .expect(401);
+
+        expect(response.body.code).toBe('UNAUTHORIZED');
     });
 
     test('POST /auth/login - unknown username', async () => {
 
-        await request(app)
+        const response = await request(app)
             .post('/auth/login')
             .send({
                 username: 'unknown',
                 password: 'testPassword'
             })
             .expect(404);
+
+        expect(response.body.code).toBe('USER_NOT_FOUND');
     });
 
     test('POST /auth/refresh', async () => {
@@ -150,16 +158,18 @@ describe('Auth & Users endpoints', () => {
             })
             .expect(401);
 
-        expect(response.body.message).toBe('token_expired'); 
+        expect(response.body.code).toBe('UNAUTHORIZED');
     });
 
     test('POST /auth/refresh - invalid token', async () => {
-        await request(app)
+        const response = await request(app)
             .post('/auth/refresh')
             .send({
                 refreshToken: 'some invalid token'
             })
             .expect(401);
+
+        expect(response.body.code).toBe('UNAUTHORIZED');
     });
 
     test('POST /auth/refresh - expired token', async () => {
@@ -169,12 +179,14 @@ describe('Auth & Users endpoints', () => {
             { expiresIn: -1 }
         );
 
-        await request(app)
+        const response = await request(app)
             .post('/auth/refresh')
             .send({
                 refreshToken: expiredToken
             })
             .expect(401);
+
+        expect(response.body.code).toBe('UNAUTHORIZED');
     });
 
     test('GET /users/me', async () => {
@@ -200,16 +212,20 @@ describe('Auth & Users endpoints', () => {
     });
 
     test('GET /users/me - no Authorization', async () => {
-        await request(app)
+        const response = await request(app)
             .get('/users/me')
             .expect(401);
+
+        expect(response.body.code).toBe('UNAUTHORIZED');
     });
 
     test('GET /users/me - invalid token', async () => {
-        await request(app)
+        const response = await request(app)
             .get('/users/me')
             .set('Authorization', 'Bearer some-invalid-token')
             .expect(401);
+
+        expect(response.body.code).toBe('UNAUTHORIZED');
     });
 
     test('GET /users/me - expired token', async () => {
@@ -219,9 +235,11 @@ describe('Auth & Users endpoints', () => {
             { expiresIn: -1 }
         );
 
-        await request(app)
+        const response = await request(app)
             .get('/users/me')
             .set('Authorization', `Bearer ${expiredToken}`)
             .expect(401);
+
+        expect(response.body.code).toBe('UNAUTHORIZED');
     });
 })

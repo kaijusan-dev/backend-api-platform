@@ -8,11 +8,22 @@ const testUsers = [
 ];
 
 export const seedDatabase = async () => {
-  const usersCount = await prisma.user.count();
+  try {
+    const usersCount = await prisma.user.count();
 
-  if (usersCount > 0) return;
+    if (usersCount > 0) {
+      logger.info('Таблица пользователей уже содержит тестовые данные');
+      return;
+    }
 
-  logger.info('Users table is empty, making test data...');
-  await prisma.user.createMany({ data: testUsers });
-  logger.info(`Added ${testUsers.length} test users`);
+    logger.info('Таблица пользователей пуста. Начинаем наполнение тестовыми данными...');
+    
+    const result = await prisma.user.createMany({ data: testUsers });
+
+    logger.info({ count: result.count }, 'Тестовые пользователи успешно добавлены');
+  } catch (error) {
+    logger.error({ err: error }, 'Ошибка при наполнении базы данных тестовыми данными');
+
+    throw error;
+  }
 };

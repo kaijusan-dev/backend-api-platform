@@ -16,21 +16,18 @@ const startApp = async () => {
     await seedDatabase();
 
     app.listen(env.PORT, () => {
-      logger.info(`Server started on port ${env.PORT}`);
+      logger.info({ port: env.PORT }, "Сервер запущен");
     });
 
   } catch (error) {
-
-    const errorMessage = error instanceof Error ? error.stack : String(error);
-
-    logger.fatal(`Критическая ошибка при запуске приложения\n${errorMessage}`);
+    logger.fatal({ err: error }, "Критическая ошибка при запуске приложения");
   
     process.exit(1);
   }
 };
 
 startApp().catch((error: unknown) => {
-  const errorMessage = error instanceof Error ? error.stack : String(error);
-  logger.fatal(`Необработанная ошибка запуска\n${errorMessage}`);
+  logger.fatal({ err: error }, "Необработанная ошибка запуска");
+
   process.exit(1);
 });
