@@ -25,7 +25,7 @@ describe('Auth & Users endpoints', () => {
             }
         });
         
-        userId = user.id;
+        userId = Number(user.id);
     });
 
     test('POST /auth/register', async () => {

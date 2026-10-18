@@ -1,0 +1,37 @@
+FROM node:24-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci --legacy-peer-deps
+
+COPY . .
+
+RUN npx prisma generate
+
+RUN npm run build
+
+# Multi-stage для уменьшения размера
+
+FROM node:24-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci --omit=dev --legacy-peer-deps
+
+# Копируем скомпилированный код (папку build) из этапа сборки
+COPY --from=builder /app/build ./build
+
+# Копируем сгенерированный Prisma Client и саму схему
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/prisma ./prisma
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+
+CMD ["node", "build/src/server.js"]
+

@@ -20,7 +20,7 @@ export const registerUser = async (user: RegisterUser) => {
 
     const accessToken = jwt.sign({userId: createdUser.id}, env.JWT_SECRET, {expiresIn: '15m'});
 
-    const refreshToken = await generateRefreshToken(createdUser.id);
+    const refreshToken = await generateRefreshToken(Number(createdUser.id));
 
     const publicUser = exclude(createdUser, ['passwordHash']);
 
@@ -44,7 +44,7 @@ export const loginUser = async (data: LoginUser) => {
 
     const accessToken = jwt.sign({ userId: user.id }, env.JWT_SECRET, {expiresIn: '15m'});
 
-    const refreshToken = await generateRefreshToken(user.id);
+    const refreshToken = await generateRefreshToken(Number(user.id));
 
     const publicUser = exclude(user, ['passwordHash']);
 

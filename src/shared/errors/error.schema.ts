@@ -13,7 +13,7 @@ export type ErrorCode = typeof ERROR_CODES[number];
 
 export const ErrorResponseSchema = z.object({
     success: z.literal(false),
-    status: z.number(),
+    status: z.coerce.number(),
     code: z.enum(ERROR_CODES),
     message: z.string(),
     timestamp: z.string().datetime(),

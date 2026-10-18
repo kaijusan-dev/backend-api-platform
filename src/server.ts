@@ -4,6 +4,10 @@ import { seedDatabase } from "./shared/database/seed.js";
 import { env } from './shared/config/env.js';
 import { logger } from "./shared/config/logger.js";
 
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
 const startApp = async () => {
 
   try {

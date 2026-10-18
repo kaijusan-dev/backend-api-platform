@@ -5,7 +5,7 @@ export const UserParamsSchema = z.object({
 });
 
 export const UserSchema = z.object({
-    id: z.number(),
+    id: z.coerce.number(),
     username: z.string().min(2),
     email: z.string().email(),
     passwordHash: z.string().min(6),
@@ -20,7 +20,7 @@ export const CreateUserSchema = z.object({
 });
 
 export const UserResponseSchema = z.object({
-    id: z.number(),
+    id: z.coerce.number(),
     username: z.string().min(2),
     email: z.string().email(),
     createdAt: z.string().datetime(),
@@ -28,10 +28,10 @@ export const UserResponseSchema = z.object({
 });
 
 export const PaginationMetaSchema = z.object({
-  page: z.number(),
-  limit: z.number(),
-  total: z.number(),
-  totalPages: z.number(),
+  page: z.coerce.number(),
+  limit: z.coerce.number(),
+  total: z.coerce.number(),
+  totalPages: z.coerce.number(),
 });
 
 export const PaginationQuerySchema = z.object({
@@ -43,8 +43,8 @@ export const PaginationQuerySchema = z.object({
 });
 
 export const QueryForDbSchema = z.object({
-    skip: z.number().int(),
-    take: z.number().int(),
+    skip: z.coerce.number().int(),
+    take: z.coerce.number().int(),
     where: z.any().optional(),
     orderBy: z.any().optional(),
 });
