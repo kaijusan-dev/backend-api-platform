@@ -9,6 +9,8 @@ export const ERROR_CODES = [
     'INTERNAL_SERVER_ERROR',
 ] as const;
 
+export type ErrorCode = typeof ERROR_CODES[number];
+
 export const ErrorResponseSchema = z.object({
     success: z.literal(false),
     status: z.number(),

@@ -1,7 +1,7 @@
 import { type Request, type Response, type NextFunction  } from 'express';
 import { env } from '../config/env.js';
-import { HttpError, type ErrorCode } from '../errors/http.errors.js';
-import type { ErrorResponse } from '../errors/error.schema.js';
+import { HttpError } from '../errors/http.errors.js';
+import type { ErrorCode, ErrorResponse } from '../errors/error.schema.js';
 
 export const errorMiddleware = (
   err: Error,

@@ -1,10 +1,4 @@
-export type ErrorCode = 
-    | 'USER_NOT_FOUND' 
-    | 'PATH_NOT_FOUND' 
-    | 'VALIDATION_ERROR' 
-    | 'CONFLICT' 
-    | 'UNAUTHORIZED' 
-    | 'INTERNAL_SERVER_ERROR';
+import type { ErrorCode } from "./error.schema.js";
 
 export class HttpError extends Error {
     statusCode: number;
