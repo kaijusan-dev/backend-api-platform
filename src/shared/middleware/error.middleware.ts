@@ -1,6 +1,7 @@
 import { type Request, type Response, type NextFunction  } from 'express';
 import { env } from '../config/env.js';
 import { HttpError, type ErrorCode } from '../errors/http.errors.js';
+import type { ErrorResponse } from '../errors/error.schema.js';
 
 export const errorMiddleware = (
   err: Error,
@@ -8,17 +9,19 @@ export const errorMiddleware = (
   res: Response,
   _next: NextFunction
 ) => {
-  const statusCode = err instanceof HttpError ? err.statusCode : 500;
-  const errorCode: ErrorCode = err instanceof HttpError ? err.code : 'INTERNAL_SERVER_ERROR';
-  const message = err.message;
-  
-  res.status(statusCode).json({
+  const status = err instanceof HttpError ? err.statusCode : 500;
+  const code: ErrorCode = err instanceof HttpError ? err.code : 'INTERNAL_SERVER_ERROR';
+  // Стек вызовов показываем только в режиме разработки
+  const stack = env.NODE_ENV === 'development' ? err.stack : undefined;
+
+  const response: ErrorResponse = {
     success: false,
-    status: statusCode,
-    code: errorCode,
-    message: message,
+    status,
+    code,
+    message: err.message,
     timestamp: new Date().toISOString(),
-    // Стек вызовов показываем только в режиме разработки
-    stack: env.NODE_ENV === 'development' ? err.stack : undefined,
-  });
+    stack
+  }
+
+  res.status(status).json(response);
 };
