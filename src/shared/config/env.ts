@@ -6,7 +6,8 @@ const envSchema = z.object({
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     DATABASE_URL: z.string(),
     DATABASE_URL_TEST: z.string(),
-    JWT_SECRET: z.string()
+    JWT_SECRET: z.string(),
+    REDIS_URL: z.string()
 })
 
 const _env = envSchema.safeParse(process.env);
