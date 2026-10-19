@@ -33,7 +33,7 @@ export const createUser = async (user: CreateUser) => {
 export const updateUser = async (id: number, user: UpdateUser) => {
     // Удаляем из объекта все поля, которые имеют значение undefined, 
     const updateData = Object.fromEntries(
-        Object.entries(user).filter(([_, value]) => value !== undefined)
+        Object.entries(user).filter(([_key, value]) => value !== undefined)
     );
 
     return prisma.user.update({

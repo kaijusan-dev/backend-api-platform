@@ -24,7 +24,7 @@ app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 
 // для несуществующих путей
-app.use((req, res) => {
+app.use((req) => {
 	throw new PathNotFoundError(req.originalUrl);
 });
 

@@ -5,6 +5,7 @@ import { env } from './shared/config/env.js';
 import { logger } from "./shared/config/logger.js";
 import { connectRedis } from './shared/database/redis.js';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };

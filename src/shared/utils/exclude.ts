@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function exclude<T extends object, K extends keyof T>(
     data: T | T[],
     keys: K[]

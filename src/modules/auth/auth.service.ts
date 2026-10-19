@@ -75,7 +75,7 @@ export const refreshToken = async (token: string) => {
     try {
         isValidToken = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
         userId = isValidToken.userId;
-    } catch(e) {
+    } catch {
         throw new UnauthorizedError('invalid_token');
     }
 
