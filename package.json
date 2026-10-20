@@ -12,7 +12,7 @@
     "prisma:migrate:test": "cross-env DATABASE_URL=\"$DATABASE_URL_TEST\" npx prisma migrate dev",
     "prisma:push:test": "cross-env DATABASE_URL=\"$DATABASE_URL_TEST\" npx prisma db push",
     "prisma:reset:test": "cross-env DATABASE_URL=\"$DATABASE_URL_TEST\" npx prisma migrate reset --force",
-    "lint": "eslint src/**/*.js"
+    "lint": "eslint src/**/*.ts"
   },
   "repository": {
     "type": "git",
