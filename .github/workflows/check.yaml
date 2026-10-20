@@ -10,7 +10,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:1234@localhost:5432/backend_api_platform_test
       DATABASE_URL_TEST: postgresql://postgres:1234@localhost:5432/backend_api_platform_test
       JWT_SECRET: 'test'
-      REDIS_URL: 'test'
+      REDIS_URL: redis://localhost:6379 
     services:
       postgres:
         image: postgres:16
