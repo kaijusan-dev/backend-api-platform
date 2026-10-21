@@ -51,7 +51,7 @@ jobs:
         run: npx prisma generate
 
       - name: Prepare test database
-        run: npx prisma db push --skip-generate
+        run: npx prisma db push
 
       - name: Run ESLint
         run: npm run lint
