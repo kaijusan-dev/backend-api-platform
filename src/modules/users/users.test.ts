@@ -1,8 +1,9 @@
-import { describe, test, expect, beforeEach } from 'vitest';
+import { describe, test, expect, beforeEach, beforeAll } from 'vitest';
 import request from 'supertest';
 import { app } from '../../app.js';
 import prisma from '../../shared/database/prisma.js';
 import * as bcrypt from 'bcrypt';
+import { connectRedis } from '../../shared/database/redis.js';
 
 const createTestUser = async (count: number) => {
     const createdUsers = [];
@@ -18,6 +19,7 @@ const createTestUser = async (count: number) => {
                 passwordHash
             })
             .expect(201);
+
         createdUsers.push(response.body);
     };
 
@@ -26,8 +28,12 @@ const createTestUser = async (count: number) => {
 
 describe('endpoints /users', () => {
 
-    let userId: number | null = null;
+    beforeAll(async () => {
+        await connectRedis();
+    });
 
+    let userId: number | null = null;
+    
     beforeEach(async () => {
         await prisma.user.deleteMany();
 
@@ -40,6 +46,7 @@ describe('endpoints /users', () => {
         const response = await request(app)
             .get('/users')
             .expect(200);
+
         expect(response.body.data).toBeInstanceOf(Array);
         for (const user of response.body.data) {
             expect(user).not.toHaveProperty('passwordHash');

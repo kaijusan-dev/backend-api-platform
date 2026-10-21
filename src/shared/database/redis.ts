@@ -6,7 +6,7 @@ export const redisClient = createClient({
   url: env.REDIS_URL
 });
 
-redisClient.on('error', (err) => logger.error('Ошибка подключения Redis:', err));
+redisClient.on('error', (err) => logger.error({ err }, 'Ошибка подключения Redis:'));
 redisClient.on('connect', () => logger.info('Успешное подключение к Redis'));
 
 export const invalidateCacheByPattern = async (pattern: string) => {

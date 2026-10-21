@@ -1,10 +1,10 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import request from 'supertest';
-import { app } from '../../app.js';
 import prisma from '../../shared/database/prisma.js';
 import jwt from 'jsonwebtoken';
 import { env } from '../../shared/config/env.js';
 import bcrypt from 'bcrypt';
+import { app } from '../../app.js';
 
 describe('Auth & Users endpoints', () => {
 
@@ -198,12 +198,21 @@ describe('Auth & Users endpoints', () => {
                 password: 'testPassword'
             })
             .expect(200);
-            
-        const token = loginResponse.body.accessToken;
+
+        const refreshToken = loginResponse.body.refreshToken;
+
+        const refreshResponse = await request(app)
+            .post('/auth/refresh')
+            .send({
+                refreshToken: refreshToken
+            })
+            .expect(200);
+
+        const token = refreshResponse.body.accessToken;
 
         const response = await request(app)
             .get('/users/me')
-            .set('Authorization', `Bearer ${token}`)
+            .set('authorization', `Bearer ${token}`)
             .expect(200);
 
         expect(response.body.username).toBe('test');

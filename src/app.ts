@@ -7,6 +7,12 @@ import { httpLogger } from './shared/middleware/http-logger.middleware.js';
 import { apiContract } from './api.contract.js';
 import { errorMiddleware } from './shared/middleware/error.middleware.js';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
+
 export const app = express();
 
 app.use(express.json())

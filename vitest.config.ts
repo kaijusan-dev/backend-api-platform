@@ -2,6 +2,10 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+
+    // Включаем полную изоляцию сред для каждого файла тестов
+    isolate: true,
+
     // Отключаем параллельный запуск разных файлов тестов
     fileParallelism: false, 
     

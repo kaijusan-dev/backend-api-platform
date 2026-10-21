@@ -7,8 +7,8 @@ jobs:
     env:
       NODE_ENV: test
       VITEST: 'true'
-      DATABASE_URL: postgresql://postgres:1234@localhost:5432/backend_api_platform_test
-      DATABASE_URL_TEST: postgresql://postgres:1234@localhost:5432/backend_api_platform_test
+      DATABASE_URL: postgresql://postgres:123456@localhost:5432/backend_api_platform_test
+      DATABASE_URL_TEST: postgresql://postgres:123456@localhost:5432/backend_api_platform_test
       JWT_SECRET: 'test'
       REDIS_URL: redis://localhost:6379 
     services:
@@ -16,7 +16,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: '1234'
+          POSTGRES_PASSWORD: '123456'
           POSTGRES_DB: backend_api_platform_test
         ports:
           - 5432:5432
@@ -25,12 +25,21 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
           cache: npm
@@ -42,7 +51,7 @@ jobs:
         run: npx prisma generate
 
       - name: Prepare test database
-        run: npm run prisma:push:test
+        run: npx prisma db push --skip-generate
 
       - name: Run ESLint
         run: npm run lint

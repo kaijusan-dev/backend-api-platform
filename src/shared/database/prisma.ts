@@ -4,11 +4,11 @@ import { Pool } from 'pg';
 import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
 
-const isTest = process.env.VITEST === 'true';
-
-const connectionString = isTest 
-    ? env.DATABASE_URL_TEST
-    : env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL || (
+  process.env.VITEST === 'true' 
+    ? env.DATABASE_URL_TEST 
+    : env.DATABASE_URL
+);
 
 const pool = new Pool({
   connectionString
