@@ -7,7 +7,7 @@ services:
     expose:
       - "3000"
     env_file:
-      - .env.docker
+      - .env.prod
     depends_on:
       postgres:
         condition: service_healthy
@@ -35,7 +35,7 @@ services:
       - "5433:5432"
     container_name: backend-api-postgres
     env_file:
-      - .env.docker
+      - .env.prod
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
