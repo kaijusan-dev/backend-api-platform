@@ -12,9 +12,13 @@ RUN npx prisma generate
 
 RUN npm run build
 
-# Multi-stage для уменьшения размера
+# Образ для миграций БД
+FROM builder AS migrator
 
-FROM node:24-alpine
+CMD ["npx", "prisma", "db", "push"]
+
+# Production-образ приложения
+FROM node:24-alpine AS production
 
 WORKDIR /app
 
