@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
 
-const connectionString = process.env.DATABASE_URL || (
+const connectionString = env.DATABASE_URL || (
   process.env.VITEST === 'true' 
     ? env.DATABASE_URL_TEST 
     : env.DATABASE_URL
