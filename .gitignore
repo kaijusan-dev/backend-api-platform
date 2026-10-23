@@ -9,4 +9,4 @@ coverage/
 .state/
 State/
 /generated/prisma
-/backups/
+backups/
