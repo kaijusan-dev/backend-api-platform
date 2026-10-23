@@ -7,8 +7,8 @@ BACKUP_FILE="$BACKUP_DIR/db-$TIMESTAMP.sql"
 
 mkdir -p "$BACKUP_DIR"
 
-if ! docker compose -f docker-compose-prod.yaml exec -T postgres 
-  pg_dump -U postgres -d backend_api_platform > "$BACKUP_FILE"; then
+if ! docker compose -f docker-compose-prod.yaml exec -T postgres \
+  sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB"' > "$BACKUP_FILE"; then
   rm -f "$BACKUP_FILE"
   echo "Backup failed" >&2
   exit 1
